@@ -4,6 +4,7 @@ import com.eCommerceDemo.dream_shops.exceptions.ProductNotFoundException;
 import com.eCommerceDemo.dream_shops.model.Category;
 import com.eCommerceDemo.dream_shops.model.Product;
 import com.eCommerceDemo.dream_shops.repository.CategoryRepository;
+import com.eCommerceDemo.dream_shops.repository.ImageRepository;
 import com.eCommerceDemo.dream_shops.repository.ProductRepository;
 import com.eCommerceDemo.dream_shops.request.AddProductRequest;
 import com.eCommerceDemo.dream_shops.request.ProductUpdateRequest;
@@ -19,6 +20,8 @@ public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+
+    private final ImageRepository imageRepository;
 
 
     @Override
