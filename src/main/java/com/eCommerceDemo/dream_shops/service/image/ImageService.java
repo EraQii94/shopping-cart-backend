@@ -39,38 +39,41 @@ public class ImageService implements IIMageService{
     }
 
     @Override
-    public List<ImageDto> saveImages(List<MultipartFile> files, Long ProductId) {
-        Product product = productService.getProductById(ProductId);
-        List<ImageDto> savedImageDto =new ArrayList<>();
-        for (MultipartFile file : files){
+    public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) {
+        Product product = productService.getProductById(productId);
+        List<ImageDto> savedImageDto = new ArrayList<>();
+
+        for (MultipartFile file : files) {
             try {
                 Image image = new Image();
                 image.setFileName(file.getOriginalFilename());
                 image.setFileType(file.getContentType());
-                image.setImage(new SerialBlob(file.getBytes()));
+                image.setImage(new SerialBlob(file.getBytes())); // قد تحتاج لتغيير هذا حسب نوع قاعدة البيانات
                 image.setProduct(product);
 
                 String buildDownloadUrl = "/api/v1/images/image/download";
                 String downloadUrl = buildDownloadUrl + image.getId();
                 image.setDownloadUrl(downloadUrl);
+
+                // حفظ الصورة في قاعدة البيانات
                 Image savedImage = imageRepository.save(image);
 
-                savedImage.setDownloadUrl(buildDownloadUrl+savedImage.getId());
-                imageRepository.save(savedImage);
-
+                // تجهيز الـ DTO
                 ImageDto imageDto = new ImageDto();
                 imageDto.setImageId(savedImage.getId());
                 imageDto.setImageName(savedImage.getFileName());
                 imageDto.setDownloadUri(savedImage.getDownloadUrl());
                 savedImageDto.add(imageDto);
 
-            }   catch (IOException  | SQLException e){
-                throw new RuntimeException(e.getMessage());
-
+            } catch (IOException | SQLException e) {
+                // هنا يمكن إضافة معالج للخطأ بشكل أفضل أو إلقاء استثناء مخصص.
+                throw new RuntimeException("Error saving image: " + e.getMessage());
             }
         }
+
         return savedImageDto;
     }
+
 
     @Override
     public void updateImage(MultipartFile file, Long ImageId) {

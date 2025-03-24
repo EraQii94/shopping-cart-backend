@@ -1,6 +1,7 @@
 package com.eCommerceDemo.dream_shops.controller;
 
 
+import com.eCommerceDemo.dream_shops.dto.ProductDto;
 import com.eCommerceDemo.dream_shops.exceptions.ResourceNotFoundException;
 import com.eCommerceDemo.dream_shops.model.Product;
 import com.eCommerceDemo.dream_shops.request.AddProductRequest;
@@ -8,6 +9,7 @@ import com.eCommerceDemo.dream_shops.request.ProductUpdateRequest;
 import com.eCommerceDemo.dream_shops.response.ApiResponse;
 import com.eCommerceDemo.dream_shops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 @RequestMapping("${api.prefix}/product")
 public class ProductController {
+    @Autowired
     private final IProductService productService;
 
 
@@ -28,7 +31,7 @@ public class ProductController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> GetAllProducts(){
-        List<Product> products = productService.getAllProducts();
+        List<ProductDto> products = productService.getAllProducts();
         return ResponseEntity.ok(new ApiResponse("Found!", products));
     }
 
@@ -134,10 +137,10 @@ public class ProductController {
 
 
 
-    @GetMapping("product/by-brandNaMe")
-    public ResponseEntity<ApiResponse> getProductByBrand(@RequestParam String brandName){
+    @GetMapping("product/by-brand")
+    public ResponseEntity<ApiResponse> getProductByBrand(@RequestParam String brand){
         try {
-            List<Product> products = productService.getProductsByBrand(brandName);
+            List<Product> products = productService.getProductsByBrand(brand);
             if (products.isEmpty()){
                 return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No product found", null));
             }
@@ -151,9 +154,9 @@ public class ProductController {
 
 
     @GetMapping("/product/{categoryName}/products")
-    public ResponseEntity<ApiResponse> findProductByCategory(@PathVariable String categoryName){
+    public ResponseEntity<ApiResponse> findProductByCategory(@PathVariable String category){
         try {
-            List<Product> products = productService.getProductsByCategory(categoryName);
+            List<Product> products = productService.getProductsByCategory(category);
             if (products.isEmpty()){
                 return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No product found", null));
             }

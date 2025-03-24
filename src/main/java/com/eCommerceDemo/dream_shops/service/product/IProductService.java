@@ -1,5 +1,6 @@
 package com.eCommerceDemo.dream_shops.service.product;
 
+import com.eCommerceDemo.dream_shops.dto.ProductDto;
 import com.eCommerceDemo.dream_shops.model.Product;
 import com.eCommerceDemo.dream_shops.request.AddProductRequest;
 import com.eCommerceDemo.dream_shops.request.ProductUpdateRequest;
@@ -19,4 +20,7 @@ public interface IProductService {
     List<Product> getProductByBrandAndName(String brand, String name);
     Long countProductsByBrandAndName(String Brand, String name);
 
+    List<ProductDto> convertToProduct(List<Product> products);
+
+    ProductDto convertToDto(Product product);
 }
