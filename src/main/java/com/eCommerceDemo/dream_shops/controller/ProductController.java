@@ -31,8 +31,9 @@ public class ProductController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> GetAllProducts(){
-        List<ProductDto> products = productService.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("Found!", products));
+        List<Product> products = productService.getAllProducts();
+        List<ProductDto> convertedProducts = productService.convertToProduct(products);
+        return ResponseEntity.ok(new ApiResponse("Found!", convertedProducts));
     }
 
 
@@ -43,7 +44,8 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id){
         try {
             Product product = productService.getProductById(id);
-            return ResponseEntity.ok(new ApiResponse("Found!", product));
+            ProductDto productDto = productService.convertToDto(product);
+            return ResponseEntity.ok(new ApiResponse("Found!", productDto));
         } catch (Exception e) {
             return  ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
