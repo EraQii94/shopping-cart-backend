@@ -6,12 +6,12 @@ import com.eCommerceDemo.dream_shops.model.CartItem;
 import com.eCommerceDemo.dream_shops.model.Product;
 import com.eCommerceDemo.dream_shops.repository.CartItemRepository;
 import com.eCommerceDemo.dream_shops.repository.CartRepository;
-import com.eCommerceDemo.dream_shops.service.cart.CartService;
 import com.eCommerceDemo.dream_shops.service.cart.ICartService;
 import com.eCommerceDemo.dream_shops.service.product.IProductService;
-import com.eCommerceDemo.dream_shops.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -58,11 +58,7 @@ public class CartItemService implements ICartItemService{
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
         Cart cart = cartService.getCart(cartId);
-        CartItem itemToRemove = cart.getItems()
-                .stream()
-                .filter(item-> item.getProduct().getId().equals(productId)).findFirst()
-                .orElseThrow(()-> new ResourceNotFoundException("Item not found in the cart"));
-
+        CartItem itemToRemove = getCartItem(cartId, productId);
         cart.removeItem(itemToRemove);
         cartRepository.save(cart);
     }
@@ -83,5 +79,18 @@ public class CartItemService implements ICartItemService{
                     item.setTotalPrice();
 
                 });
+        BigDecimal totalAmount = cart.getTotalAmount();
+        cart.setTotalAmount(totalAmount);
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public CartItem getCartItem(Long cartId, Long productId) {
+        Cart cart = cartService.getCart(cartId);
+        return cart.getItems()
+                .stream()
+                .filter(item-> item.getProduct().getId().equals(productId)).findFirst()
+                .orElseThrow(()-> new ResourceNotFoundException("Item not found in the cart"));
+
     }
 }
