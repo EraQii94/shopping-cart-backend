@@ -4,6 +4,7 @@ import com.eCommerceDemo.dream_shops.exceptions.ResourceNotFoundException;
 import com.eCommerceDemo.dream_shops.model.Cart;
 import com.eCommerceDemo.dream_shops.repository.CartItemRepository;
 import com.eCommerceDemo.dream_shops.repository.CartRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ public class CartService implements ICartService{
         return cartRepository.save(cart);
     }
 
+    @Transactional
     @Override
     public void clearCart(Long id) {
         Cart cart = getCart(id);
@@ -42,14 +44,15 @@ public class CartService implements ICartService{
     }
 
 
+    @Transactional
     @Override
-    public Long initializeNewCart(){
+    public Long initializeNewCart() {
         Cart cart = new Cart();
-        cart.setId(cartIdGenerator.incrementAndGet());
-        cart.setTotalAmount(BigDecimal.ZERO);
-        cartRepository.save(cart);
-        return cart.getId();
+        // إعداد البيانات المبدئية
+        Cart savedCart = cartRepository.save(cart);  // تأكد أن cart جديد وليس موجود مسبقًا
+        return savedCart.getId();
     }
+
 
 
 }

@@ -8,6 +8,7 @@ import com.eCommerceDemo.dream_shops.repository.CartItemRepository;
 import com.eCommerceDemo.dream_shops.repository.CartRepository;
 import com.eCommerceDemo.dream_shops.service.cart.ICartService;
 import com.eCommerceDemo.dream_shops.service.product.IProductService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,12 @@ public class CartItemService implements ICartItemService{
     private final IProductService productService;
     private final ICartService cartService;
 
+    @Transactional
     @Override
-    public void addCartItem(Long cartId, Long productId, int quantity) {
+    public void addItemToCart(Long cartId, Long productId, int quantity) {
         //1. get the cart
         //2. get the product
-        //3. check if the item already oin the cart
+        //3. check if the item already in the cart
         //4. if yes, increase the quantity with your requested quantity
         //5. if no, initiate new cart item entry
 
@@ -52,6 +54,7 @@ public class CartItemService implements ICartItemService{
         cartItem.setTotalPrice();
         cart.addItem(cartItem);
         cartItemRepository.save(cartItem);
+        cartRepository.save(cart);
     }
 
 
@@ -79,7 +82,10 @@ public class CartItemService implements ICartItemService{
                     item.setTotalPrice();
 
                 });
-        BigDecimal totalAmount = cart.getTotalAmount();
+        BigDecimal totalAmount = cart.getItems()
+                .stream().map(CartItem ::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         cart.setTotalAmount(totalAmount);
         cartRepository.save(cart);
     }
@@ -89,7 +95,8 @@ public class CartItemService implements ICartItemService{
         Cart cart = cartService.getCart(cartId);
         return cart.getItems()
                 .stream()
-                .filter(item-> item.getProduct().getId().equals(productId)).findFirst()
+                .filter(item-> item.getProduct().getId().equals(productId))
+                .findFirst()
                 .orElseThrow(()-> new ResourceNotFoundException("Item not found in the cart"));
 
     }

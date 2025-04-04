@@ -5,7 +5,6 @@ import com.eCommerceDemo.dream_shops.exceptions.ResourceNotFoundException;
 import com.eCommerceDemo.dream_shops.model.Cart;
 import com.eCommerceDemo.dream_shops.response.ApiResponse;
 import com.eCommerceDemo.dream_shops.service.cart.ICartService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.prefix}/cart")
+@RequestMapping("${api.prefix}/carts")
 public class CartController {
     private final ICartService cartService;
 
